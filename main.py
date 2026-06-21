@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 from discord import ui
 import json
+import os # 加入這行以讀取環境變數
 
 # 初始設定
 DATA_FILE = "data.json"
@@ -9,7 +10,7 @@ DATA_FILE = "data.json"
 def load_data():
     try:
         with open(DATA_FILE, 'r') as f: return json.load(f)
-    except: return {"currency_name": "頑幣", "users": {}}
+    except: return {"currency_name": "代幣", "users": {}}
 
 def save_data(data):
     with open(DATA_FILE, 'w') as f: json.dump(data, f, indent=4, ensure_ascii=False)
@@ -23,7 +24,7 @@ class CheckinView(ui.View):
     def __init__(self):
         super().__init__(timeout=None) # 設置為 None 讓按鈕永久有效
 
-    @ui.button(label="點我簽到領頑幣", style=discord.ButtonStyle.green, custom_id="checkin_btn")
+    @ui.button(label="點我簽到領代幣", style=discord.ButtonStyle.green, custom_id="checkin_btn")
     async def checkin(self, interaction: discord.Interaction, button: ui.Button):
         data = load_data()
         # 這裡加入您原本的簽到邏輯 (隨機金額、日期檢查)
@@ -55,4 +56,5 @@ async def on_ready():
     bot.add_view(CheckinView()) # 必須在啟動時註冊 View
     print("機器人已啟動，按鈕已註冊")
 
-bot.run('YOUR_TOKEN')
+# 使用環境變數讀取 Token，避免外洩
+bot.run(os.getenv('DISCORD_TOKEN'))
